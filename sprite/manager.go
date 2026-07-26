@@ -167,13 +167,16 @@ func NewAnimator(
 // the walk animation every frame.
 func (a *Animator) Play(name string) error {
 	if a.animationName == name {
+		if a.finished {
+			return a.Restart(name)
+		}
 		return nil
 	}
 
 	return a.Restart(name)
 }
 
-// Stop the current animation
+// Stop the animation
 func (a *Animator) Stop(name string) error {
 	if _, exists := a.manager.animations[name]; !exists {
 		return fmt.Errorf(
@@ -182,7 +185,7 @@ func (a *Animator) Stop(name string) error {
 		)
 	}
 	a.animationName = name
-	a.frameIndex = 0
+	a.frameIndex = 1
 	a.elapsedTicks = 0
 	a.finished = true
 	return nil
@@ -205,6 +208,7 @@ func (a *Animator) Restart(name string) error {
 	return nil
 }
 
+// Update and play the current running animation
 func (a *Animator) Update() {
 	animation, exists := a.manager.animations[a.animationName]
 	if !exists || a.finished {
