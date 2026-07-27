@@ -8,6 +8,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	camera "sidneiwill.dev/BaseRPGMovement/game"
 	"sidneiwill.dev/BaseRPGMovement/player"
 )
 
@@ -33,8 +34,7 @@ type Game struct {
 	playerY float64
 	flipX   bool
 
-	cameraX float64
-	cameraY float64
+	camera camera.Camera
 }
 
 func clamp(value, min, max float64) float64 {
@@ -77,7 +77,7 @@ func NewGame() (*Game, error) {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	mapOptions := &ebiten.DrawImageOptions{}
-	mapOptions.GeoM.Translate(-g.cameraX, -g.cameraY)
+	mapOptions.GeoM.Translate(-g.camera.X, -g.camera.Y)
 	screen.DrawImage(g.mapImage, mapOptions)
 
 	drawX := g.playerX - float64(g.player.Animator.CurrentFrame().Bounds().Dx()/2)
@@ -85,8 +85,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	g.player.Animator.Draw(
 		screen,
-		drawX-g.cameraX,
-		drawY-g.cameraY,
+		drawX-g.camera.X,
+		drawY-g.camera.Y,
 		1,       // Scale
 		g.flipX, // Horizontal direction
 	)
@@ -154,14 +154,7 @@ func (g *Game) Update() error {
 	g.player.Animator.Update()
 
 	// Updates the camera
-	targetCameraX := g.playerX - screenWidth/2
-	targetCameraY := g.playerY - screenHeight/2
-
-	g.cameraX = lerp(g.cameraX, targetCameraX, cameraSmoothness)
-	g.cameraY = lerp(g.cameraY, targetCameraY, cameraSmoothness)
-
-	g.cameraX = clamp(g.cameraX, 0, mapWidth-screenWidth)
-	g.cameraY = clamp(g.cameraY, 0, mapHeight-screenHeight)
+	g.camera.Follow(g.playerX, g.playerY, screenWidth, screenHeight, int(mapWidth), int(mapHeight), cameraSmoothness)
 
 	return nil
 }
