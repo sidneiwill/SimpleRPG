@@ -18,10 +18,11 @@ var mapImageBytes []byte
 var playerSpriteSheet []byte
 
 const (
-	screenWidth  = 320
-	screenHeight = 240
-	windowWidth  = 640
-	windowHeight = 480
+	screenWidth      = 320
+	screenHeight     = 240
+	windowWidth      = 640
+	windowHeight     = 480
+	cameraSmoothness = 0.08
 )
 
 type Game struct {
@@ -48,6 +49,10 @@ func clamp(value, min, max float64) float64 {
 		return max
 	}
 	return value
+}
+
+func lerp(current, target, amount float64) float64 {
+	return current + (target-current)*amount
 }
 
 func NewGame() (*Game, error) {
@@ -149,8 +154,11 @@ func (g *Game) Update() error {
 	g.player.Animator.Update()
 
 	// Updates the camera
-	g.cameraX = g.playerX - screenWidth/2
-	g.cameraY = g.playerY - screenHeight/2
+	targetCameraX := g.playerX - screenWidth/2
+	targetCameraY := g.playerY - screenHeight/2
+
+	g.cameraX = lerp(g.cameraX, targetCameraX, cameraSmoothness)
+	g.cameraY = lerp(g.cameraY, targetCameraY, cameraSmoothness)
 
 	g.cameraX = clamp(g.cameraX, 0, mapWidth-screenWidth)
 	g.cameraY = clamp(g.cameraY, 0, mapHeight-screenHeight)
