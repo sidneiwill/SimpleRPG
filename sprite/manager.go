@@ -185,7 +185,7 @@ func (a *Animator) Stop(name string) error {
 		)
 	}
 	a.animationName = name
-	a.frameIndex = 1
+	a.frameIndex = 3
 	a.elapsedTicks = 0
 	a.finished = true
 	return nil

@@ -39,9 +39,9 @@ func NewAnimator(spriteSheet []byte) (*Player, error) {
 		"up",
 		1,
 		0,
-		3,
-		16,
-		32,
+		4,
+		48,
+		48,
 	); err != nil {
 		return nil, err
 	}
@@ -50,20 +50,20 @@ func NewAnimator(spriteSheet []byte) (*Player, error) {
 		"down",
 		0,
 		0,
-		3,
-		16,
-		32,
+		4,
+		48,
+		48,
 	); err != nil {
 		return nil, err
 	}
 
 	if err := manager.AddGridRow(
 		"right",
-		2,
-		0,
 		3,
-		16,
-		32,
+		0,
+		4,
+		48,
+		48,
 	); err != nil {
 		return nil, err
 	}
@@ -71,9 +71,10 @@ func NewAnimator(spriteSheet []byte) (*Player, error) {
 	if err := manager.AddAnimation(
 		"walk_up",
 		[]string{
+			"up_2",
+			"up_3",
 			"up_0",
 			"up_1",
-			"up_2",
 		},
 		6,
 		true,
@@ -84,9 +85,10 @@ func NewAnimator(spriteSheet []byte) (*Player, error) {
 	if err := manager.AddAnimation(
 		"walk_down",
 		[]string{
+			"down_2",
+			"down_3",
 			"down_0",
 			"down_1",
-			"down_2",
 		},
 		6,
 		true,
@@ -97,9 +99,10 @@ func NewAnimator(spriteSheet []byte) (*Player, error) {
 	if err := manager.AddAnimation(
 		"walk_right",
 		[]string{
-			"right_0",
-			"right_1",
 			"right_2",
+			"right_3",
+			"right_1",
+			"right_0",
 		},
 		6,
 		true,
