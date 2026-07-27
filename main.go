@@ -70,8 +70,8 @@ func NewGame() (*Game, error) {
 	return &Game{
 		player:   player,
 		mapImage: mapImage,
-		playerX:  0,
-		playerY:  0,
+		playerX:  screenWidth / 2,
+		playerY:  screenHeight / 2,
 	}, nil
 }
 
@@ -80,6 +80,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	mapOptions.GeoM.Translate(-g.camera.X, -g.camera.Y)
 	screen.DrawImage(g.mapImage, mapOptions)
 
+	// Draw the sprite in the center of the "Object"
 	drawX := g.playerX - float64(g.player.Animator.CurrentFrame().Bounds().Dx()/2)
 	drawY := g.playerY - float64(g.player.Animator.CurrentFrame().Bounds().Dy()/2)
 
