@@ -1,4 +1,6 @@
-package camera
+package game
+
+import "sidneiwill.dev/BaseRPGMovement/internal/mathutil"
 
 type Camera struct {
 	X float64
@@ -14,29 +16,15 @@ func (c *Camera) Follow(
 	mapHeight int,
 	smoothness float64,
 ) {
-	targetCameraX := targetX - float64((screenWidth))/2
-	targetCameraY := targetY - float64((screenHeight))/2
+	// Center the camera on the target
+	targetCameraX := targetX - float64(screenWidth)/2
+	targetCameraY := targetY - float64(screenHeight)/2
 
-	targetCameraX = clamp(targetCameraX, 0, float64(mapWidth-screenWidth))
-	targetCameraY = clamp(targetCameraY, 0, float64(mapHeight-screenHeight))
+	// Keep the camera inside the map bounds
+	targetCameraX = mathutil.Clamp(targetCameraX, 0, float64(mapWidth-screenWidth))
+	targetCameraY = mathutil.Clamp(targetCameraY, 0, float64(mapHeight-screenHeight))
 
-	c.X = lerp(c.X, targetCameraX, smoothness)
-	c.Y = lerp(c.Y, targetCameraY, smoothness)
-}
-
-// Take a value and clamp it to a given limit
-func clamp(value, min, max float64) float64 {
-	if value < min {
-		return min
-	}
-
-	if value > max {
-		return max
-	}
-
-	return value
-}
-
-func lerp(current, target, amount float64) float64 {
-	return current + (target-current)*amount
+	// Smoothly move the camera toward the target position
+	c.X = mathutil.Lerp(c.X, targetCameraX, smoothness)
+	c.Y = mathutil.Lerp(c.Y, targetCameraY, smoothness)
 }
