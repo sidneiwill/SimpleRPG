@@ -121,11 +121,6 @@ sprite/manager.go    reusable sprite animation system
   - Move `go:embed` variables and image loading code into an `assets.go` file.
   - Important: `go:embed` cannot use `../assets/map.png`, so either keep `assets.go` in the same folder as `assets/`, or move image files under the package that embeds them.
 
-- [ ] Extract player movement/input handling.
-  - Move the WASD logic out of `Update` once it grows more.
-  - Good first shape: create a method like `g.updatePlayerMovement()` in `game/player_movement.go`.
-  - Do not create a separate `input` package yet; a method is enough for now.
-
 - [ ] Extract drawing helpers if `Draw` keeps growing.
   - Good first shape: `g.drawMap(screen)` and `g.drawPlayer(screen)` in `game/render.go`.
   - This keeps `Draw` readable without creating a renderer abstraction too early.
