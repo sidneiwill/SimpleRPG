@@ -31,24 +31,6 @@ This project uses free assets from [Sprout Lands - Asset Pack by Cup Nooble](htt
 
 The free version is intended for non-commercial projects, according to the asset page. Credit goes to Cup Nooble.
 
-## Project Structure 📁
-
-```text
-.
-├── assets/
-│   ├── character.png
-│   └── map.png
-├── game/
-│   └── camera.go
-├── player/
-│   └── player.go
-├── sprite/
-│   └── manager.go
-├── main.go
-├── go.mod
-└── TODO.md
-```
-
 ## Running The Project ▶️
 
 Install dependencies and run the game:
@@ -104,23 +86,6 @@ sprite/manager.go    reusable sprite animation system
 
 ### Refactor Organization
 
-- [ ] Rename the camera package or folder so they match.
-  - Current state: `game/camera.go` says `package camera`, but it lives in the `game/` folder.
-  - Better beginner option: move it to `camera/camera.go` and import `sidneiwill.dev/BaseRPGMovement/camera`.
-  - Alternative: keep it in `game/`, but use `package game`.
-
-- [ ] Extract the `Game` type and Ebiten methods from `main.go`.
-  - Move `type Game`, `NewGame`, `Update`, `Draw`, and `Layout` into `game/game.go`.
-  - Keep `main.go` responsible only for creating the game, setting the window, and calling `ebiten.RunGame`.
-
-- [ ] Extract constants into a dedicated file.
-  - Move `screenWidth`, `screenHeight`, `windowWidth`, `windowHeight`, and `cameraSmoothness` into `game/constants.go`.
-  - If they must be used from `main.go`, export them as `ScreenWidth`, `WindowWidth`, etc.
-
-- [ ] Extract asset loading from `main.go`.
-  - Move `go:embed` variables and image loading code into an `assets.go` file.
-  - Important: `go:embed` cannot use `../assets/map.png`, so either keep `assets.go` in the same folder as `assets/`, or move image files under the package that embeds them.
-
 - [ ] Extract drawing helpers if `Draw` keeps growing.
   - Good first shape: `g.drawMap(screen)` and `g.drawPlayer(screen)` in `game/render.go`.
   - This keeps `Draw` readable without creating a renderer abstraction too early.
@@ -132,7 +97,6 @@ sprite/manager.go    reusable sprite animation system
 
 ### Cleanup Notes
 
-- [ ] Remove duplicate `clamp` and `lerp` functions if they exist in more than one package.
 - [ ] Keep package names simple and consistent with folder names.
 - [ ] Run `gofmt` after moving code.
 - [ ] Run `go test ./...` after each refactor step.
