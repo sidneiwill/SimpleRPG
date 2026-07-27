@@ -1,8 +1,6 @@
 package main
 
 import (
-	_ "embed"
-	_ "image/png"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
