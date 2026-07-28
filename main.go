@@ -14,7 +14,7 @@ func main() {
 	}
 
 	ebiten.SetWindowSize(game.WindowWidth, game.WindowHeight)
-	ebiten.SetWindowTitle("Pokemon Basic Game")
+	ebiten.SetWindowTitle("RPGMovement")
 
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)

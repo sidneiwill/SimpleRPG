@@ -5,6 +5,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"sidneiwill.dev/BaseRPGMovement/internal/mathutil"
 	"sidneiwill.dev/BaseRPGMovement/player"
 )
@@ -26,6 +27,10 @@ type Game struct {
 	flipX   bool
 
 	camera Camera
+
+	inventoryOpen   bool
+	inventoryCursor int
+	inventoryItems  []string
 }
 
 func NewGame() (*Game, error) {
@@ -45,6 +50,11 @@ func NewGame() (*Game, error) {
 		mapImage: mapImage,
 		playerX:  ScreenWidth / 2,
 		playerY:  ScreenHeight / 2,
+		inventoryItems: []string{
+			"Lantern",
+			"Red Potion",
+			"Iron Axe",
+		},
 	}, nil
 }
 
@@ -64,11 +74,19 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		1,       // Scale
 		g.flipX, // Horizontal direction
 	)
+
+	if g.inventoryOpen {
+		g.drawInventory(screen)
+	}
 }
 
 func (g *Game) Update() error {
-	if err := g.updatePlayerMovement(); err != nil {
-		return err
+	if inpututil.IsKeyJustPressed(ebiten.KeyI) {
+		g.inventoryOpen = !g.inventoryOpen
+		if g.inventoryOpen {
+			g.player.StopWalking()
+		}
+
 	}
 
 	mapWidth := float64(g.mapImage.Bounds().Dx())
@@ -83,6 +101,14 @@ func (g *Game) Update() error {
 	// Updates the camera
 	g.camera.Follow(g.playerX, g.playerY, ScreenWidth, ScreenHeight, int(mapWidth), int(mapHeight), cameraSmoothness)
 
+	if g.inventoryOpen {
+		g.updateInventory()
+		return nil
+	}
+
+	if err := g.updatePlayerMovement(); err != nil {
+		return err
+	}
 	return nil
 }
 
