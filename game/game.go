@@ -4,6 +4,7 @@ import (
 	"bytes"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"sidneiwill.dev/BaseRPGMovement/internal/mathutil"
@@ -21,6 +22,9 @@ const (
 type Game struct {
 	player   *player.Player
 	mapImage *ebiten.Image
+
+	audioContext *audio.Context
+	musicPlayer  *audio.Player
 
 	playerX float64
 	playerY float64
@@ -45,7 +49,7 @@ func NewGame() (*Game, error) {
 	}
 	player.Animator.Stop(player.Animator.AnimationName())
 
-	return &Game{
+	g := &Game{
 		player:   player,
 		mapImage: mapImage,
 		playerX:  ScreenWidth / 2,
@@ -55,7 +59,13 @@ func NewGame() (*Game, error) {
 			"Red Potion",
 			"Iron Axe",
 		},
-	}, nil
+	}
+
+	if err := g.PlaySong(); err != nil {
+		return nil, err
+	}
+
+	return g, nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {

@@ -20,6 +20,7 @@ Created using assets from [Sprout Lands - Asset Pack](https://cupnooble.itch.io/
 - Opens and closes a simple inventory menu with `I`.
 - Lets the player move the inventory cursor with `W` and `S`.
 - Pauses player movement while the inventory menu is open.
+- Plays looping background music from an embedded Ogg/Vorbis asset.
 - Keeps rendering at a fixed internal resolution while scaling the game window.
 
 ## Tech Stack
@@ -27,6 +28,7 @@ Created using assets from [Sprout Lands - Asset Pack](https://cupnooble.itch.io/
 - Go
 - Ebiten
 - Embedded PNG assets with `go:embed`
+- Embedded Ogg/Vorbis music with `go:embed`
 
 ## Assets & Credits
 
@@ -70,6 +72,7 @@ The project is currently split into small packages and files:
 main.go              app startup only
 game/game.go         Game struct, Update, Draw, Layout
 game/camera.go       camera movement
+game/audio.go        background music loading and playback
 game/assets.go       asset loading
 game/inventory.go    inventory input and drawing
 game/player_movement.go player movement input
@@ -79,6 +82,16 @@ internal/mathutil    shared math helpers
 ```
 
 The current inventory is an early menu overlay. It displays a small item list, tracks a cursor, wraps the cursor at the top and bottom, and stops player movement while open.
+
+The current audio system plays a looping village music track from `game/assets/music/village.ogg` when the game starts.
+
+## Background Music
+
+The game now includes an initial background music system. The current track is stored at `game/assets/music/village.ogg` and embedded into the binary with `go:embed`, the same general approach used for image assets.
+
+At startup, the game decodes the embedded Ogg/Vorbis file with Ebiten's audio package, wraps it in an infinite loop, sets the playback volume, and starts the music when the `Game` instance is created.
+
+The current implementation is intentionally simple: it plays one looping song for the whole prototype. A later version can expand this into a small music manager for switching tracks by map, scene, battle state, or menu state.
 
 ## Roadmap
 
@@ -96,6 +109,11 @@ The current inventory is an early menu overlay. It displays a small item list, t
   - Open and close the menu with `I`.
   - Move through the item list with `W` and `S`.
   - Pause movement while the menu is open.
+
+- [x] Add initial background music.
+  - Embed an Ogg/Vorbis music file.
+  - Decode and loop the track with Ebiten audio.
+  - Start playback when the game is created.
 
 - [ ] Expand the inventory into a fuller RPG menu.
   - Add categories such as items, status, equipment, save, and settings.
