@@ -58,6 +58,7 @@ A - move left
 S - move down
 D - move right
 I - open/close inventory
+F3 - show/hide collision boundaries
 
 When inventory is open:
 W - move cursor up
