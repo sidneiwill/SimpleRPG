@@ -41,10 +41,9 @@ func (g *Game) updatePlayerMovement() error {
 
 	dx, dy := movementDelta(up, down, left, right, movementSpeed)
 
-	g.playerX += dx
-	g.playerY += dy
+	actualDX, actualDY := g.movePlayer(dx, dy)
 
-	if dx == 0 && dy == 0 {
+	if actualDX == 0 && actualDY == 0 {
 		g.player.StopWalking()
 		return nil
 	}
@@ -53,19 +52,17 @@ func (g *Game) updatePlayerMovement() error {
 
 	// This deliberately gives horizontal animation priority on diagonals.
 	switch {
-	case dx < 0:
+	case actualDX < 0:
 		direction = player.DirectionLeft
 		g.flipX = true
-	case dx > 0:
+	case actualDX > 0:
 		direction = player.DirectionRight
 		g.flipX = false
-	case dy < 0:
+	case actualDY < 0:
 		direction = player.DirectionUp
-	case dy > 0:
+	case actualDY > 0:
 		direction = player.DirectionDown
 	}
 
 	return g.player.StartWalking(direction)
-
-	return nil
 }

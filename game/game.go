@@ -7,7 +7,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"sidneiwill.dev/BaseRPGMovement/internal/mathutil"
 	"sidneiwill.dev/BaseRPGMovement/player"
 )
 
@@ -26,9 +25,11 @@ type Game struct {
 	audioContext *audio.Context
 	musicPlayer  *audio.Player
 
-	playerX float64
-	playerY float64
-	flipX   bool
+	playerX            float64
+	playerY            float64
+	flipX              bool
+	colliders          []collisionRect
+	showCollisionDebug bool
 
 	camera Camera
 
@@ -52,8 +53,14 @@ func NewGame() (*Game, error) {
 	g := &Game{
 		player:   player,
 		mapImage: mapImage,
-		playerX:  ScreenWidth / 2,
-		playerY:  ScreenHeight / 2,
+		playerX:  300,
+		playerY:  150,
+		colliders: []collisionRect{
+			// Map obstacles use world coordinates.
+			{X: 147, Y: 82, W: 91, H: 67},  // House on the western island.
+			{X: 260, Y: 0, W: 23, H: 123},  // Vertical pond.
+			{X: 498, Y: 211, W: 78, H: 75}, // House on the southern island.
+		},
 		inventoryItems: []string{
 			"Lantern",
 			"Red Potion",
@@ -85,12 +92,20 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		g.flipX, // Horizontal direction
 	)
 
+	if g.showCollisionDebug {
+		g.drawCollisionDebug(screen)
+	}
+
 	if g.inventoryOpen {
 		g.drawInventory(screen)
 	}
 }
 
 func (g *Game) Update() error {
+	if inpututil.IsKeyJustPressed(ebiten.KeyF3) {
+		g.showCollisionDebug = !g.showCollisionDebug
+	}
+
 	if inpututil.IsKeyJustPressed(ebiten.KeyI) {
 		g.inventoryOpen = !g.inventoryOpen
 		if g.inventoryOpen {
@@ -101,9 +116,6 @@ func (g *Game) Update() error {
 
 	mapWidth := float64(g.mapImage.Bounds().Dx())
 	mapHeight := float64(g.mapImage.Bounds().Dy())
-
-	g.playerX = mathutil.Clamp(g.playerX, 0, mapWidth-16)
-	g.playerY = mathutil.Clamp(g.playerY, 0, mapHeight-32)
 
 	// Update the player
 	g.player.Animator.Update()
